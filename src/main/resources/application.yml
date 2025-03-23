@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: spring-kafka-poc
+
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+
+server:
+  port: 18080
