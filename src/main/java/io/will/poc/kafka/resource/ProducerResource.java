@@ -31,4 +31,11 @@ public class ProducerResource {
         System.out.println("/greeting-message: " + greeting);
         simpleProducer.sendGreeting(greeting);
     }
+
+    @GetMapping("/multi-types")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void goMultiTypes() {
+        System.out.println("GET /multi-types");
+        simpleProducer.sendToMultiTypeTopic();
+    }
 }

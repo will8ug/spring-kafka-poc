@@ -1,0 +1,5 @@
+./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topic
+./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topicGreeting
+./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topicMultiType
+
+./kafka-topics.sh --list --bootstrap-server 127.0.0.1:9092

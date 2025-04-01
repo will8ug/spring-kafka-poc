@@ -1,5 +1,6 @@
 package io.will.poc.kafka.producer;
 
+import io.will.poc.kafka.model.Farewell;
 import io.will.poc.kafka.model.Greeting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -8,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_BASIC;
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_GREETING;
+import static io.will.poc.kafka.config.KafkaTopicConfig.*;
 
 @Component
 public class SimpleProducer {
@@ -18,6 +18,8 @@ public class SimpleProducer {
     private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
     private KafkaTemplate<String, Greeting> greetingKafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, Object> multiTypeKafkaTemplate;
 
     public void sendMessage(String msg) {
         kafkaTemplate.send(TOPIC_BASIC, msg);
@@ -29,6 +31,8 @@ public class SimpleProducer {
             if (ex == null) {
                 System.out.println("Sent message=[" + message + "] with offset=[" +
                         result.getRecordMetadata().offset() + "]");
+                System.out.println("Key: " + result.getProducerRecord().key() +
+                        " | Value: " + result.getProducerRecord().value());
             } else {
                 System.out.println("Unable to send message=[" + message +
                         "] due to: " + ex.getMessage());
@@ -38,5 +42,11 @@ public class SimpleProducer {
 
     public void sendGreeting(Greeting greeting) {
         greetingKafkaTemplate.send(TOPIC_GREETING, greeting);
+    }
+
+    public void sendToMultiTypeTopic() {
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Greeting("just greeting", "Alice"));
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Farewell("just farewell", 10));
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, "static simple message");
     }
 }

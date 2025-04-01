@@ -14,6 +14,7 @@ import java.util.Map;
 public class KafkaTopicConfig {
     public static final String TOPIC_BASIC = "topic";
     public static final String TOPIC_GREETING = "topicGreeting";
+    public static final String TOPIC_MULTI_TYPE = "topicMultiType";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;

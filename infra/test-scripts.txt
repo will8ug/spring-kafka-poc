@@ -1,9 +1,4 @@
+curl -i http://localhost:18080/health
 curl -i http://localhost:18080/message -X POST --data 'A first message'
 curl -i http://localhost:18080/greeting-message -X POST --data '{ "name": "Bob", "message": "Hey" }' -H "Content-Type:application/json"
-
-docker run --name kafka apache/kafka:4.0.0
-
-./kafka-topics.sh --list --bootstrap-server 127.0.0.1:9092
-
-./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topic
-./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topicGreeting
+curl -i http://localhost:18080/multi-types
