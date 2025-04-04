@@ -97,11 +97,10 @@ public class KafkaConsumerConfig {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        props.put(JsonDeserializer.REMOVE_TYPE_INFO_HEADERS, false);
-//        props.put(JsonDeserializer.TRUSTED_PACKAGES, "io.will.poc.kafka.model");
-//        props.put(JsonDeserializer.TYPE_MAPPINGS,
-//                "greeting:io.will.poc.kafka.model.Greeting,farewell:io.will.poc.kafka.model.Farewell");
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "io.will.poc.kafka.model");
+        props.put(JsonDeserializer.TYPE_MAPPINGS,
+                "greeting:io.will.poc.kafka.model.Greeting,farewell:io.will.poc.kafka.model.Farewell");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
@@ -110,7 +109,7 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(multiTypeConsumerFactory());
-        factory.setRecordMessageConverter(multiTypeConverter());
+//        factory.setRecordMessageConverter(multiTypeConverter());
         return factory;
     }
 }
