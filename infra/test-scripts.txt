@@ -1,4 +1,4 @@
 curl -i http://localhost:18080/health
-curl -i http://localhost:18080/message -X POST --data 'A first message'
+curl -i http://localhost:18080/message -X POST -H "Content-Type:text/plain" --data 'A first message'
 curl -i http://localhost:18080/greeting-message -X POST --data '{ "name": "Bob", "message": "Hey" }' -H "Content-Type:application/json"
-curl -i http://localhost:18080/multi-types
+curl -i http://localhost:18080/multi-types -X POST

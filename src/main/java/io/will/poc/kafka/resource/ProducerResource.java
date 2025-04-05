@@ -18,7 +18,7 @@ public class ProducerResource {
         System.out.println("GET /health");
     }
 
-    @PostMapping(path = "/message")
+    @PostMapping(path = "/message", consumes = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void simpleMessage(@RequestBody String message) {
         System.out.println("/message: " + message);
@@ -32,10 +32,10 @@ public class ProducerResource {
         simpleProducer.sendGreeting(greeting);
     }
 
-    @GetMapping("/multi-types")
+    @PostMapping("/multi-types")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void goMultiTypes() {
-        System.out.println("GET /multi-types");
+        System.out.println("POST /multi-types");
         simpleProducer.sendToMultiTypeTopic();
     }
 }
