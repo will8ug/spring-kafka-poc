@@ -21,6 +21,8 @@ public class SimpleConsumer {
     @KafkaListener(topics = TOPIC_BASIC, groupId = "foo", containerFactory = "filterKafkaListenerContainerFactory")
     public void listenWithFilter(String message) {
         System.out.println("Received Message in filtered listener: " + message);
+
+        messageRepository.save(new Message(Message.Type.SIMPLE, message));
     }
 
     @KafkaListener(topics = TOPIC_BASIC)
@@ -35,5 +37,7 @@ public class SimpleConsumer {
     @KafkaListener(topics = TOPIC_GREETING, containerFactory = "greetingKafkaListenerContainerFactory")
     public void greetingListener(Greeting greeting) {
         System.out.println("Got a greeting: " + greeting);
+
+        messageRepository.save(new Message(Message.Type.GREETING, greeting.message()));
     }
 }

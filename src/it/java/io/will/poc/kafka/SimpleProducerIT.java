@@ -1,7 +1,9 @@
 package io.will.poc.kafka;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.will.poc.kafka.domain.Message;
 import io.will.poc.kafka.domain.MessageRepository;
+import io.will.poc.kafka.model.Greeting;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,26 +37,48 @@ public class SimpleProducerIT {
 
     @Test
     public void testSimpleMessage() throws Exception {
+        String message = "simple message from IT";
         ResultActions resultActions = mvc.perform(
                 post("/message")
                         .contentType(MediaType.TEXT_PLAIN_VALUE)
-                        .content("simple message")
+                        .content(message)
         );
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks();
+        Optional<Message> msg = waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
+        assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
 
-    private Optional<Message> waitUntilConsumerWorks() {
+    @Test
+    public void testGreetingMessage() throws Exception {
+        String rawMsg = "greeting message from IT";
+        Greeting greeting = new Greeting(rawMsg, "Bob");
+        String jsonGreeting = new ObjectMapper().writeValueAsString(greeting);
+        System.out.println(jsonGreeting);
+
+        ResultActions resultActions = mvc.perform(
+                post("/greeting-message")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(jsonGreeting)
+        );
+
+        resultActions.andExpect(status().isNoContent());
+
+        Optional<Message> msg = waitUntilConsumerWorks(rawMsg);
+        assertTrue(msg.isPresent());
+        assertEquals(Message.Type.GREETING, msg.get().getType());
+    }
+
+    private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
         int timeout = 30;
         while (timeout > 0) {
             waitFor5Seconds();
             timeout -= 5;
 
             try {
-                Message msg = messageRepository.findByContent("simple message");
+                Message msg = messageRepository.findByContent(expectedMessage);
                 System.out.println(msg);
                 if (msg != null) {
                     return Optional.of(msg);
