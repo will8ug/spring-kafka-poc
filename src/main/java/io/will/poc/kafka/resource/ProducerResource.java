@@ -1,6 +1,7 @@
 package io.will.poc.kafka.resource;
 
 import io.will.poc.kafka.model.Greeting;
+import io.will.poc.kafka.producer.MultiTypeProducer;
 import io.will.poc.kafka.producer.SimpleProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 public class ProducerResource {
     @Autowired
     private SimpleProducer simpleProducer;
+    @Autowired
+    private MultiTypeProducer multiTypeProducer;
 
     @GetMapping("/health")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -36,6 +39,6 @@ public class ProducerResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void goMultiTypes() {
         System.out.println("POST /multi-types");
-        simpleProducer.sendToMultiTypeTopic();
+        multiTypeProducer.sendToMultiTypeTopic();
     }
 }
