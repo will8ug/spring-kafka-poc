@@ -71,6 +71,25 @@ public class SimpleProducerIT {
         assertEquals(Message.Type.GREETING, msg.get().getType());
     }
 
+    @Test
+    public void testMultiTypesMessage() throws Exception {
+        ResultActions resultActions = mvc.perform(post("/multi-types"));
+
+        resultActions.andExpect(status().isNoContent());
+
+        Optional<Message> greetingMsg = waitUntilConsumerWorks("greeting to multi-type topic");
+        assertTrue(greetingMsg.isPresent());
+        assertEquals(Message.Type.GREETING, greetingMsg.get().getType());
+
+        Optional<Message> farewellMsg = waitUntilConsumerWorks("farewell to multi-type topic");
+        assertTrue(farewellMsg.isPresent());
+        assertEquals(Message.Type.FAREWELL, farewellMsg.get().getType());
+
+        Optional<Message> unknownMsg = waitUntilConsumerWorks("static simple message to multi-type topic");
+        assertTrue(unknownMsg.isPresent());
+        assertEquals(Message.Type.SIMPLE, unknownMsg.get().getType());
+    }
+
     private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
         int timeout = 30;
         while (timeout > 0) {
@@ -84,6 +103,7 @@ public class SimpleProducerIT {
                     return Optional.of(msg);
                 }
             } catch (EntityNotFoundException e) {
+                // ignore and continue waiting
                 System.out.println(e.getMessage());
             }
         }

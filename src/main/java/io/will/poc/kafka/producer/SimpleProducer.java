@@ -45,8 +45,8 @@ public class SimpleProducer {
     }
 
     public void sendToMultiTypeTopic() {
-        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Greeting("just greeting", "Alice"));
-        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Farewell("just farewell", 10));
-        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, "static simple message");
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Greeting("greeting to multi-type topic", "Alice"));
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, new Farewell("farewell to multi-type topic", 10));
+        multiTypeKafkaTemplate.send(TOPIC_MULTI_TYPE, "static simple message to multi-type topic");
     }
 }
