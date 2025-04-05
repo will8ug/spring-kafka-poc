@@ -84,6 +84,22 @@ public class SimpleProducerIT {
     }
 
     @Test
+    public void testSimpleMessage_withCallback() throws Exception {
+        String message = "message to callback from IT";
+        ResultActions resultActions = mvc.perform(
+                post("/message-call-back")
+                        .contentType(MediaType.TEXT_PLAIN_VALUE)
+                        .content(message)
+        );
+
+        resultActions.andExpect(status().isNoContent());
+
+        Optional<Message> msg = waitUntilConsumerWorks(message);
+        assertTrue(msg.isPresent());
+        assertEquals(Message.Type.SIMPLE, msg.get().getType());
+    }
+
+    @Test
     public void testGreetingMessage() throws Exception {
         String rawMsg = "greeting message from IT";
         Greeting greeting = new Greeting(rawMsg, "Bob");

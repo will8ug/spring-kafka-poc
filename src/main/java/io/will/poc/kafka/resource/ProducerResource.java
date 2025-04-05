@@ -35,6 +35,13 @@ public class ProducerResource {
         }
     }
 
+    @PostMapping(path = "/message-call-back", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void simpleMessage(@RequestBody String message) {
+        System.out.println("/message: " + message);
+        simpleProducer.sendMessageWithCallback(message);
+    }
+
     @PostMapping(path = "/greeting-message", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void greetingMessage(@RequestBody Greeting greeting) {
