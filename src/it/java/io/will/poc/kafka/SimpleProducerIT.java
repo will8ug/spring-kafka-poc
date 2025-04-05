@@ -93,8 +93,8 @@ public class SimpleProducerIT {
     private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
         int timeout = 30;
         while (timeout > 0) {
-            waitFor3Seconds();
-            timeout -= 3;
+            waitFor1Seconds();
+            timeout -= 1;
 
             try {
                 Message msg = messageRepository.findByContent(expectedMessage);
@@ -110,10 +110,10 @@ public class SimpleProducerIT {
         return Optional.empty();
     }
 
-    private static void waitFor3Seconds() {
+    private static void waitFor1Seconds() {
         try {
-            System.out.println("sleeping for 3 seconds...");
-            TimeUnit.SECONDS.sleep(3);
+            System.out.println("sleeping for 1 seconds...");
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
