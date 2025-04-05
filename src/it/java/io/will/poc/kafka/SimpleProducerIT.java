@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_WITH_FILTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,6 +50,37 @@ public class SimpleProducerIT {
         Optional<Message> msg = waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
+    }
+
+    @Test
+    public void testSimpleMessage_withFilter_notFilterOut() throws Exception {
+        String message = "simple message passing through the filter";
+        ResultActions resultActions = mvc.perform(
+                post("/message?topic=" + TOPIC_WITH_FILTER)
+                        .contentType(MediaType.TEXT_PLAIN_VALUE)
+                        .content(message)
+        );
+
+        resultActions.andExpect(status().isNoContent());
+
+        Optional<Message> msg = waitUntilConsumerWorks(message);
+        assertTrue(msg.isPresent());
+        assertEquals(Message.Type.SIMPLE, msg.get().getType());
+    }
+
+    @Test
+    public void testSimpleMessage_withFilter_filterOut() throws Exception {
+        String message = "Hello World!";
+        ResultActions resultActions = mvc.perform(
+                post("/message?topic=" + TOPIC_WITH_FILTER)
+                        .contentType(MediaType.TEXT_PLAIN_VALUE)
+                        .content(message)
+        );
+
+        resultActions.andExpect(status().isNoContent());
+
+        Optional<Message> msg = waitUntilConsumerWorks(message, 15);
+        assertTrue(msg.isEmpty());
     }
 
     @Test
@@ -90,8 +122,7 @@ public class SimpleProducerIT {
         assertEquals(Message.Type.SIMPLE, unknownMsg.get().getType());
     }
 
-    private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
-        int timeout = 30;
+    private Optional<Message> waitUntilConsumerWorks(String expectedMessage, int timeout) {
         while (timeout > 0) {
             waitFor1Seconds();
             timeout -= 1;
@@ -108,6 +139,10 @@ public class SimpleProducerIT {
             }
         }
         return Optional.empty();
+    }
+
+    private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
+        return waitUntilConsumerWorks(expectedMessage, 30);
     }
 
     private static void waitFor1Seconds() {

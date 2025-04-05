@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_BASIC;
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_GREETING;
+import static io.will.poc.kafka.config.KafkaTopicConfig.*;
 
 @Component
 public class SimpleProducer {
@@ -21,6 +20,10 @@ public class SimpleProducer {
 
     public void sendMessage(String msg) {
         kafkaTemplate.send(TOPIC_BASIC, msg);
+    }
+
+    public void sendMessageToFilterTopic(String msg) {
+        kafkaTemplate.send(TOPIC_WITH_FILTER, msg);
     }
 
     public void sendMessageWithCallback(String message) {

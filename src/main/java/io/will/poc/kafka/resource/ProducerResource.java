@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_WITH_FILTER;
+
 @RestController
 public class ProducerResource {
     @Autowired
@@ -23,9 +25,14 @@ public class ProducerResource {
 
     @PostMapping(path = "/message", consumes = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void simpleMessage(@RequestBody String message) {
-        System.out.println("/message: " + message);
-        simpleProducer.sendMessage(message);
+    public void simpleMessage(@RequestBody String message,
+                              @RequestParam(required = false) String topic) {
+        System.out.printf("/message: topic[%s] message[%s]%n", topic, message);
+        if (TOPIC_WITH_FILTER.equalsIgnoreCase(topic)) {
+            simpleProducer.sendMessageToFilterTopic(message);
+        } else {
+            simpleProducer.sendMessage(message);
+        }
     }
 
     @PostMapping(path = "/greeting-message", consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -10,15 +10,14 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_BASIC;
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_GREETING;
+import static io.will.poc.kafka.config.KafkaTopicConfig.*;
 
 @Component
 public class SimpleConsumer {
     @Autowired
     private MessageRepository messageRepository;
 
-    @KafkaListener(topics = TOPIC_BASIC, groupId = "foo", containerFactory = "filterKafkaListenerContainerFactory")
+    @KafkaListener(topics = TOPIC_WITH_FILTER, groupId = "foo", containerFactory = "filterKafkaListenerContainerFactory")
     public void listenWithFilter(String message) {
         System.out.println("Received Message in filtered listener: " + message);
 
