@@ -1,5 +1,8 @@
 package io.will.poc.kafka;
 
+import io.will.poc.kafka.domain.Message;
+import io.will.poc.kafka.domain.MessageRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +14,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +29,9 @@ public class SimpleProducerIT {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     @Test
     public void testSimpleMessage() throws Exception {
         ResultActions resultActions = mvc.perform(
@@ -38,23 +42,35 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Path expectedOutputFile = Path.of("/tmp", "spring-kafk-poc-test.txt");
-        int timeout = 0;
-        while (timeout < 6) {
+        Optional<Message> msg = waitUntilConsumerWorks();
+        assertTrue(msg.isPresent());
+    }
+
+    private Optional<Message> waitUntilConsumerWorks() {
+        int timeout = 30;
+        while (timeout > 0) {
+            waitFor5Seconds();
+            timeout -= 5;
+
             try {
-                System.out.println("sleeping for 5 seconds...");
-                TimeUnit.SECONDS.sleep(5);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                Message msg = messageRepository.findByContent("simple message");
+                System.out.println(msg);
+                if (msg != null) {
+                    return Optional.of(msg);
+                }
+            } catch (EntityNotFoundException e) {
+                System.out.println(e.getMessage());
             }
-
-            if (Files.exists(expectedOutputFile) && Files.size(expectedOutputFile) > 0) {
-                break;
-            }
-            timeout++;
         }
+        return Optional.empty();
+    }
 
-        assertEquals("simple message", Files.readString(expectedOutputFile));
-        assertTrue(timeout < 6);
+    private static void waitFor5Seconds() {
+        try {
+            System.out.println("sleeping for 5 seconds...");
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

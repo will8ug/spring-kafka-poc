@@ -46,8 +46,6 @@ public class KafkaConsumerConfig {
         return factory;
     }
 
-    // partitionsKafkaListenerContainerFactory()
-
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> filterKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
