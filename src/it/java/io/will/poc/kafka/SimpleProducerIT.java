@@ -2,9 +2,7 @@ package io.will.poc.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.will.poc.kafka.domain.Message;
-import io.will.poc.kafka.domain.MessageRepository;
 import io.will.poc.kafka.model.Greeting;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_WITH_FILTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +31,7 @@ public class SimpleProducerIT {
     private MockMvc mvc;
 
     @Autowired
-    private MessageRepository messageRepository;
+    private CommonUtils commonUtils;
 
     @Test
     public void testSimpleMessage() throws Exception {
@@ -47,7 +44,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks(message);
+        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -63,7 +60,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks(message);
+        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -79,7 +76,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks(message, 15);
+        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message, 15);
         assertTrue(msg.isEmpty());
     }
 
@@ -94,7 +91,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks(message);
+        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -114,59 +111,8 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = waitUntilConsumerWorks(rawMsg);
+        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(rawMsg);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.GREETING, msg.get().getType());
-    }
-
-    @Test
-    public void testMultiTypesMessage() throws Exception {
-        ResultActions resultActions = mvc.perform(post("/multi-types"));
-
-        resultActions.andExpect(status().isNoContent());
-
-        Optional<Message> greetingMsg = waitUntilConsumerWorks("greeting to multi-type topic");
-        assertTrue(greetingMsg.isPresent());
-        assertEquals(Message.Type.GREETING, greetingMsg.get().getType());
-
-        Optional<Message> farewellMsg = waitUntilConsumerWorks("farewell to multi-type topic");
-        assertTrue(farewellMsg.isPresent());
-        assertEquals(Message.Type.FAREWELL, farewellMsg.get().getType());
-
-        Optional<Message> unknownMsg = waitUntilConsumerWorks("static simple message to multi-type topic");
-        assertTrue(unknownMsg.isPresent());
-        assertEquals(Message.Type.SIMPLE, unknownMsg.get().getType());
-    }
-
-    private Optional<Message> waitUntilConsumerWorks(String expectedMessage, int timeout) {
-        while (timeout > 0) {
-            waitFor1Seconds();
-            timeout -= 1;
-
-            try {
-                Message msg = messageRepository.findByContent(expectedMessage);
-                System.out.println(msg);
-                if (msg != null) {
-                    return Optional.of(msg);
-                }
-            } catch (EntityNotFoundException e) {
-                // ignore and continue waiting
-                System.out.println(e.getMessage());
-            }
-        }
-        return Optional.empty();
-    }
-
-    private Optional<Message> waitUntilConsumerWorks(String expectedMessage) {
-        return waitUntilConsumerWorks(expectedMessage, 30);
-    }
-
-    private static void waitFor1Seconds() {
-        try {
-            System.out.println("sleeping for 1 seconds...");
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
