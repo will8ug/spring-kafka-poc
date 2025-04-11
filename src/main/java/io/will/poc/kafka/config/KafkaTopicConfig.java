@@ -16,6 +16,7 @@ public class KafkaTopicConfig {
     public static final String TOPIC_GREETING = "greeting";
     public static final String TOPIC_MULTI_TYPE = "multi-type";
     public static final String TOPIC_WITH_FILTER = "filter";
+    public static final String TOPIC_RETRYABLE = "retryable";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;

@@ -2,6 +2,7 @@ package io.will.poc.kafka.resource;
 
 import io.will.poc.kafka.model.Greeting;
 import io.will.poc.kafka.producer.MultiTypeProducer;
+import io.will.poc.kafka.producer.RetryableProducer;
 import io.will.poc.kafka.producer.SimpleProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ public class ProducerResource {
     private SimpleProducer simpleProducer;
     @Autowired
     private MultiTypeProducer multiTypeProducer;
+    @Autowired
+    private RetryableProducer retryableProducer;
 
     @GetMapping("/health")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -27,7 +30,7 @@ public class ProducerResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void simpleMessage(@RequestBody String message,
                               @RequestParam(required = false) String topic) {
-        System.out.printf("/message: topic[%s] message[%s]%n", topic, message);
+        System.out.printf("/message: request parameter 'topic'[%s] message[%s]%n", topic, message);
         if (TOPIC_WITH_FILTER.equalsIgnoreCase(topic)) {
             simpleProducer.sendMessageToFilterTopic(message);
         } else {
@@ -54,5 +57,12 @@ public class ProducerResource {
     public void goMultiTypes() {
         System.out.println("POST /multi-types");
         multiTypeProducer.sendToMultiTypeTopic();
+    }
+
+    @PostMapping(path = "/greeting-to-retry", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void greetingWithRetry(@RequestBody Greeting greeting) {
+        System.out.println("/greeting-to-retry: " + greeting);
+        retryableProducer.sendGreetingToRetry(greeting);
     }
 }

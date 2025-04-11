@@ -62,4 +62,9 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, Object> multiTypeKafkaTemplate() {
         return new KafkaTemplate<>(multiTypeProducerFactory());
     }
+
+    @Bean
+    public KafkaTemplate<String, Greeting> retryableKafkaTemplate() {
+        return new KafkaTemplate<>(greetingProducerFactory());
+    }
 }
