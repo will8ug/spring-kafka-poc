@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +44,7 @@ public class DltHandlerIT {
             return null;
         }).when(retryableConsumer).handleRetryableGreeting(any(), any());
 
-        String jsonGreeting = mockGreetingJson("greeting message from IT");
+        String jsonGreeting = mockGreetingJson("greeting message from IT - basic happy path");
 
         ResultActions resultActions = mvc.perform(
                 post("/greeting-to-retry")
@@ -56,6 +56,36 @@ public class DltHandlerIT {
 
         assertTrue(mainTopicCountDownLatch.await(15, TimeUnit.SECONDS));
         verify(retryableConsumer, never()).handleDltGreeting(any(), any());
+    }
+
+    @Test
+    public void whenDltConsumerFails_thenDltProcessingStops() throws Exception {
+        CountDownLatch mainTopicCountDownLatch = new CountDownLatch(1);
+        CountDownLatch dltTopicCountDownLatch = new CountDownLatch(2);
+
+        doAnswer(invocationOnMock -> {
+            System.out.println("Coming in to a spying behavior of main consumer");
+            mainTopicCountDownLatch.countDown();
+            throw new Exception("Simulating error in main consumer");
+        }).when(retryableConsumer).handleRetryableGreeting(any(), any());
+
+        doAnswer(invocationOnMock -> {
+            System.out.println("Coming in to a spying behavior of dlt consumer");
+            dltTopicCountDownLatch.countDown();
+            throw new Exception("Simulating error in dlt consumer");
+        }).when(retryableConsumer).handleDltGreeting(any(), any());
+
+        ResultActions resultActions = mvc.perform(
+                post("/greeting-to-retry")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(mockGreetingJson("greeting message from IT - sad path"))
+        );
+
+        resultActions.andExpect(status().isNoContent());
+
+        assertTrue(mainTopicCountDownLatch.await(15, TimeUnit.SECONDS));
+        assertFalse(dltTopicCountDownLatch.await(15, TimeUnit.SECONDS));
+        assertEquals(1, dltTopicCountDownLatch.getCount());
     }
 
     private static String mockGreetingJson(String rawMsg) throws JsonProcessingException {
