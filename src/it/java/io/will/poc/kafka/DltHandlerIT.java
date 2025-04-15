@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = SpringKafkaPocApplication.class)
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application-it.yml")
 public class DltHandlerIT {
     @Autowired
     private MockMvc mvc;
@@ -37,7 +35,7 @@ public class DltHandlerIT {
     private RetryableConsumer retryableConsumer;
 
     @Test
-    public void testMainConsumerSucceeds_noDltMessage() throws Exception {
+    public void whenMainConsumerSucceeds_thenNoDltMessage() throws Exception {
         CountDownLatch mainTopicCountDownLatch = new CountDownLatch(1);
 
         doAnswer(invocationOnMock -> {
