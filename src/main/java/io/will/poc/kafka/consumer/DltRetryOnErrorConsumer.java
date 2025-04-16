@@ -11,14 +11,14 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_RETRYABLE;
+import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_RETRYABLE_RETRY_ON_ERROR;
 
 @Component
-public class RetryableConsumer {
-    private final Logger LOGGER = LoggerFactory.getLogger(RetryableConsumer.class);
+public class DltRetryOnErrorConsumer {
+    private final Logger LOGGER = LoggerFactory.getLogger(DltRetryOnErrorConsumer.class);
 
-    @RetryableTopic(attempts = "1", kafkaTemplate = "retryableKafkaTemplate", dltStrategy = DltStrategy.FAIL_ON_ERROR)
-    @KafkaListener(topics = {TOPIC_RETRYABLE}, containerFactory = "greetingKafkaListenerContainerFactory")
+    @RetryableTopic(attempts = "1", kafkaTemplate = "retryableKafkaTemplate", dltStrategy = DltStrategy.ALWAYS_RETRY_ON_ERROR)
+    @KafkaListener(topics = {TOPIC_RETRYABLE_RETRY_ON_ERROR}, containerFactory = "greetingKafkaListenerContainerFactory")
     public void handleRetryableGreeting(
             Greeting greeting,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {

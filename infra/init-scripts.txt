@@ -2,6 +2,11 @@
 ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic greeting
 ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic multi-type
 ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic filter
-./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic retryable
+
+./kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic retryable
+
+./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic retryable-fail-on-error
+./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic retryable-retry-on-error
+
 
 ./kafka-topics.sh --list --bootstrap-server 127.0.0.1:9092

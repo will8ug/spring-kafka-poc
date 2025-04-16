@@ -7,6 +7,7 @@ import io.will.poc.kafka.producer.SimpleProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_WITH_FILTER;
@@ -61,8 +62,13 @@ public class ProducerResource {
 
     @PostMapping(path = "/greeting-to-retry", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void greetingWithRetry(@RequestBody Greeting greeting) {
-        System.out.println("/greeting-to-retry: " + greeting);
-        retryableProducer.sendGreetingToRetry(greeting);
+    public void greetingWithRetry(@RequestBody Greeting greeting,
+                                  @RequestParam(required = false) String strategy) {
+        System.out.printf("/greeting-to-retry: parameter 'strategy'[%s] message[%s]%n", strategy, greeting);
+        if (DltStrategy.ALWAYS_RETRY_ON_ERROR.name().equalsIgnoreCase(strategy)) {
+            retryableProducer.sendGreetingToDltRetryOnError(greeting);
+        } else {
+            retryableProducer.sendGreetingToDltFailOnError(greeting);
+        }
     }
 }
