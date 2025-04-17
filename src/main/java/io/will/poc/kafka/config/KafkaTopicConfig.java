@@ -1,5 +1,6 @@
 package io.will.poc.kafka.config;
 
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,5 +33,12 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic topic1() {
         return new NewTopic(TOPIC_BASIC, 1, (short) 1);
+    }
+
+    @Bean
+    public AdminClient adminClient() {
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        return AdminClient.create(configs);
     }
 }
