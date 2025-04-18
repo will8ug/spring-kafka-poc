@@ -67,6 +67,8 @@ public class ProducerResource {
         System.out.printf("/greeting-to-retry: parameter 'strategy'[%s] message[%s]%n", strategy, greeting);
         if (DltStrategy.ALWAYS_RETRY_ON_ERROR.name().equalsIgnoreCase(strategy)) {
             retryableProducer.sendGreetingToDltRetryOnError(greeting);
+        } else if (DltStrategy.NO_DLT.name().equalsIgnoreCase(strategy)) {
+            retryableProducer.sendGreetingToDisabledDlt(greeting);
         } else {
             retryableProducer.sendGreetingToDltFailOnError(greeting);
         }

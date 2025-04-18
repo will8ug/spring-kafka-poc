@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_RETRYABLE_FAIL_ON_ERROR;
-import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_RETRYABLE_RETRY_ON_ERROR;
+import static io.will.poc.kafka.config.KafkaTopicConfig.*;
 
 @Component
 public class RetryableProducer {
@@ -19,5 +18,9 @@ public class RetryableProducer {
 
     public void sendGreetingToDltRetryOnError(Greeting greeting) {
         greetingKafkaTemplate.send(TOPIC_RETRYABLE_RETRY_ON_ERROR, greeting);
+    }
+
+    public void sendGreetingToDisabledDlt(Greeting greeting) {
+        greetingKafkaTemplate.send(TOPIC_RETRYABLE_DISABLED_DLT, greeting);
     }
 }

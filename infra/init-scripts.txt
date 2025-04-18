@@ -7,6 +7,7 @@
 
 ./kafka-topics.sh --bootstrap-server 0.0.0.0:9092 --create --topic retryable-fail-on-error
 ./kafka-topics.sh --bootstrap-server 0.0.0.0:9092 --create --topic retryable-retry-on-error
+./kafka-topics.sh --bootstrap-server 0.0.0.0:9092 --create --topic retryable-disabled-dlt
 
 
-./kafka-topics.sh --list --bootstrap-server 127.0.0.1:9092
+./kafka-topics.sh --list --bootstrap-server 0.0.0.0:9092

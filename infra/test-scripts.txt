@@ -3,6 +3,7 @@ curl -i http://localhost:18080/message -X POST -H "Content-Type:text/plain" --da
 curl -i http://localhost:18080/greeting-message -X POST --data '{ "name": "Bob", "message": "Hey" }' -H "Content-Type:application/json"
 curl -i http://localhost:18080/multi-types -X POST
 curl -i http://localhost:18080/greeting-to-retry -X POST --data '{ "name": "Eve", "message": "Whats up" }' -H "Content-Type:application/json"
+curl -i http://localhost:18080/greeting-to-retry -X POST -H "Content-Type:application/json" --data '{ "name": "Charlie", "message": "Whats up" }' --url-query "strategy=no_dlt"
 
 
 
