@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class CommonUtils {
+public class TestRepositoryMonitor {
     @Autowired
     private MessageRepository messageRepository;
 

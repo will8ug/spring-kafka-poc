@@ -2,7 +2,7 @@ package io.will.poc.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.will.poc.kafka.domain.Message;
-import io.will.poc.kafka.test.helper.CommonUtils;
+import io.will.poc.kafka.test.helper.TestRepositoryMonitor;
 import io.will.poc.kafka.model.Greeting;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ public class SimpleProducerIT {
     private MockMvc mvc;
 
     @Autowired
-    private CommonUtils commonUtils;
+    private TestRepositoryMonitor testRepositoryMonitor;
 
     @Test
     public void testSimpleMessage() throws Exception {
@@ -45,7 +45,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
+        Optional<Message> msg = testRepositoryMonitor.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -61,7 +61,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
+        Optional<Message> msg = testRepositoryMonitor.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -77,7 +77,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message, 15);
+        Optional<Message> msg = testRepositoryMonitor.waitUntilConsumerWorks(message, 15);
         assertTrue(msg.isEmpty());
     }
 
@@ -92,7 +92,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(message);
+        Optional<Message> msg = testRepositoryMonitor.waitUntilConsumerWorks(message);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.SIMPLE, msg.get().getType());
     }
@@ -112,7 +112,7 @@ public class SimpleProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> msg = commonUtils.waitUntilConsumerWorks(rawMsg);
+        Optional<Message> msg = testRepositoryMonitor.waitUntilConsumerWorks(rawMsg);
         assertTrue(msg.isPresent());
         assertEquals(Message.Type.GREETING, msg.get().getType());
     }

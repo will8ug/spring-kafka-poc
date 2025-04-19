@@ -2,7 +2,7 @@ package io.will.poc.kafka;
 
 import io.will.poc.kafka.domain.Message;
 import io.will.poc.kafka.test.annotation.KafkaMultiTypeTest;
-import io.will.poc.kafka.test.helper.CommonUtils;
+import io.will.poc.kafka.test.helper.TestRepositoryMonitor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class MultiTypeProducerIT {
     private MockMvc mvc;
 
     @Autowired
-    private CommonUtils commonUtils;
+    private TestRepositoryMonitor testRepositoryMonitor;
 
     @Test
     public void testMultiTypesMessage() throws Exception {
@@ -36,15 +36,15 @@ public class MultiTypeProducerIT {
 
         resultActions.andExpect(status().isNoContent());
 
-        Optional<Message> greetingMsg = commonUtils.waitUntilConsumerWorks("greeting to multi-type topic");
+        Optional<Message> greetingMsg = testRepositoryMonitor.waitUntilConsumerWorks("greeting to multi-type topic");
         assertTrue(greetingMsg.isPresent());
         assertEquals(Message.Type.GREETING, greetingMsg.get().getType());
 
-        Optional<Message> farewellMsg = commonUtils.waitUntilConsumerWorks("farewell to multi-type topic");
+        Optional<Message> farewellMsg = testRepositoryMonitor.waitUntilConsumerWorks("farewell to multi-type topic");
         assertTrue(farewellMsg.isPresent());
         assertEquals(Message.Type.FAREWELL, farewellMsg.get().getType());
 
-        Optional<Message> unknownMsg = commonUtils.waitUntilConsumerWorks("static simple message to multi-type topic");
+        Optional<Message> unknownMsg = testRepositoryMonitor.waitUntilConsumerWorks("static simple message to multi-type topic");
         assertTrue(unknownMsg.isPresent());
         assertEquals(Message.Type.SIMPLE, unknownMsg.get().getType());
     }
