@@ -1,12 +1,19 @@
 package io.will.poc.kafka;
 
+import io.will.poc.kafka.consumer.MultiTypeConsumer;
 import io.will.poc.kafka.domain.Message;
+import io.will.poc.kafka.helper.CommonUtils;
+import io.will.poc.kafka.producer.MultiTypeProducer;
+import io.will.poc.kafka.resource.MultiTypeProducerResource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,6 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@ContextConfiguration(classes = {MultiTypeConsumer.class, MultiTypeProducer.class, MultiTypeProducerResource.class})
+@EnableAutoConfiguration
+@ComponentScan(value = {"io.will.poc.kafka.config", "io.will.poc.kafka.domain", "io.will.poc.kafka.helper"})
 @AutoConfigureMockMvc
 @ActiveProfiles("simple")
 public class MultiTypeProducerIT {

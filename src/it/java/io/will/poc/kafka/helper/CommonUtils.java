@@ -1,4 +1,4 @@
-package io.will.poc.kafka;
+package io.will.poc.kafka.helper;
 
 import io.will.poc.kafka.domain.Message;
 import io.will.poc.kafka.domain.MessageRepository;
