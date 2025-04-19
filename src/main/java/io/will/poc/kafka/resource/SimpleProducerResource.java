@@ -1,25 +1,18 @@
 package io.will.poc.kafka.resource;
 
 import io.will.poc.kafka.model.Greeting;
-import io.will.poc.kafka.producer.MultiTypeProducer;
-import io.will.poc.kafka.producer.RetryableProducer;
 import io.will.poc.kafka.producer.SimpleProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_WITH_FILTER;
 
 @RestController
-public class ProducerResource {
+public class SimpleProducerResource {
     @Autowired
     private SimpleProducer simpleProducer;
-    @Autowired
-    private MultiTypeProducer multiTypeProducer;
-    @Autowired
-    private RetryableProducer retryableProducer;
 
     @GetMapping("/health")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -51,26 +44,5 @@ public class ProducerResource {
     public void greetingMessage(@RequestBody Greeting greeting) {
         System.out.println("/greeting-message: " + greeting);
         simpleProducer.sendGreeting(greeting);
-    }
-
-    @PostMapping("/multi-types")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void goMultiTypes() {
-        System.out.println("POST /multi-types");
-        multiTypeProducer.sendToMultiTypeTopic();
-    }
-
-    @PostMapping(path = "/greeting-to-retry", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void greetingWithRetry(@RequestBody Greeting greeting,
-                                  @RequestParam(required = false) String strategy) {
-        System.out.printf("/greeting-to-retry: parameter 'strategy'[%s] message[%s]%n", strategy, greeting);
-        if (DltStrategy.ALWAYS_RETRY_ON_ERROR.name().equalsIgnoreCase(strategy)) {
-            retryableProducer.sendGreetingToDltRetryOnError(greeting);
-        } else if (DltStrategy.NO_DLT.name().equalsIgnoreCase(strategy)) {
-            retryableProducer.sendGreetingToDisabledDlt(greeting);
-        } else {
-            retryableProducer.sendGreetingToDltFailOnError(greeting);
-        }
     }
 }
