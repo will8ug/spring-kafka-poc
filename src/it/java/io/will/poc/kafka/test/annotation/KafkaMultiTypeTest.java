@@ -1,4 +1,4 @@
-package io.will.poc.kafka.annotation;
+package io.will.poc.kafka.test.annotation;
 
 import io.will.poc.kafka.consumer.MultiTypeConsumer;
 import io.will.poc.kafka.producer.MultiTypeProducer;
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @Inherited
 @ContextConfiguration(classes = {MultiTypeConsumer.class, MultiTypeProducer.class, MultiTypeProducerResource.class})
 @EnableAutoConfiguration
-@ComponentScan(value = {"io.will.poc.kafka.config", "io.will.poc.kafka.domain", "io.will.poc.kafka.helper"})
+@ComponentScan(value = {"io.will.poc.kafka.config", "io.will.poc.kafka.domain", "io.will.poc.kafka.test.helper"})
 @ActiveProfiles("simple")
 public @interface KafkaMultiTypeTest {
 }

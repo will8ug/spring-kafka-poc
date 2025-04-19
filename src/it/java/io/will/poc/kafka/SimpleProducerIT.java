@@ -2,7 +2,7 @@ package io.will.poc.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.will.poc.kafka.domain.Message;
-import io.will.poc.kafka.helper.CommonUtils;
+import io.will.poc.kafka.test.helper.CommonUtils;
 import io.will.poc.kafka.model.Greeting;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

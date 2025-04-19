@@ -1,8 +1,8 @@
 package io.will.poc.kafka;
 
-import io.will.poc.kafka.annotation.KafkaMultiTypeTest;
 import io.will.poc.kafka.domain.Message;
-import io.will.poc.kafka.helper.CommonUtils;
+import io.will.poc.kafka.test.annotation.KafkaMultiTypeTest;
+import io.will.poc.kafka.test.helper.CommonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
