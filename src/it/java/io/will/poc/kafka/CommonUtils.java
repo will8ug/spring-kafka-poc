@@ -21,7 +21,7 @@ public class CommonUtils {
 
             try {
                 Message msg = messageRepository.findByContent(expectedMessage);
-                System.out.println(msg);
+                System.out.printf("Got message from DB: %s%n", msg);
                 if (msg != null) {
                     return Optional.of(msg);
                 }
