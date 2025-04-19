@@ -6,8 +6,11 @@ import io.will.poc.kafka.domain.Message;
 import io.will.poc.kafka.domain.MessageRepository;
 import io.will.poc.kafka.model.Farewell;
 import io.will.poc.kafka.model.Greeting;
+import jakarta.transaction.Transactional;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,26 +24,31 @@ import static io.will.poc.kafka.config.KafkaTopicConfig.TOPIC_MULTI_TYPE;
 @Component
 @KafkaListener(groupId = "multiTypeGroup", topics = TOPIC_MULTI_TYPE, containerFactory = "multiTypeKafkaListenerContainerFactory")
 public class MultiTypeConsumer {
+    private final Logger LOGGER = LoggerFactory.getLogger(MultiTypeConsumer.class);
+
     @Autowired
     private MessageRepository messageRepository;
 
     @KafkaHandler
+    @Transactional
     public void handleGreeting(Greeting greeting) {
-        System.out.println("Received a greeting in MultiTypeConsumer: " + greeting);
+        LOGGER.info("Received a greeting in MultiTypeConsumer: {}", greeting);
 
         messageRepository.save(new Message(Message.Type.GREETING, greeting.message()));
     }
 
     @KafkaHandler
+    @Transactional
     public void handleFarewell(Farewell farewell) {
-        System.out.println("Received a farewell in MultiTypeConsumer: " + farewell);
+        LOGGER.info("Received a farewell in MultiTypeConsumer: {}", farewell);
 
         messageRepository.save(new Message(Message.Type.FAREWELL, farewell.message()));
     }
 
     @KafkaHandler(isDefault = true)
+    @Transactional
     public void handleDefault(Object object) {
-        System.out.println("Received an unknown object in MultiTypeConsumer: " + object);
+        LOGGER.info("Received an unknown object in MultiTypeConsumer: {}", object);
 
         messageRepository.save(new Message(Message.Type.SIMPLE,
                 object == null ? "null" : object.toString()));
