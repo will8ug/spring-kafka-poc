@@ -8,3 +8,6 @@ curl -i http://localhost:18080/greeting-to-retry -X POST -H "Content-Type:applic
 
 
 ./kafka-console-consumer.sh --bootstrap-server=0.0.0.0:9092 --from-beginning --topic retryable-retry-on-error --partition=0 --timeout-ms 1000
+
+
+./mvnw verify -Dit.test=DltFailOnErrorIT
