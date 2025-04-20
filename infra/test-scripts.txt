@@ -11,3 +11,9 @@ curl -i http://localhost:18080/greeting-to-retry -X POST -H "Content-Type:applic
 
 
 ./mvnw verify -Dit.test=DltFailOnErrorIT
+
+# skip the executions of exec-maven-plugin
+./mvnw verify -Dexec.skip=true
+
+# skip tearing down the Kafka container
+./mvnw verify -Dexec.args="--skip-teardown"
